@@ -2,6 +2,8 @@ module vgatop(
     i_vgaclk,
     i_reset,
 
+    i_enable,
+
     o_hSync,
     o_vSync,
     o_red,
@@ -11,8 +13,9 @@ module vgatop(
     o_inth,
     o_intv,
 
-    o_pixIdx,
-    i_pixData,
+    o_pixIdx,  // pixel address
+    o_pixGate, // high when in visible area
+    i_pixData, // pixel data
 
     // wishbone for conf. reg access
     o_wb_ack,
@@ -26,6 +29,7 @@ module vgatop(
 
 input i_vgaclk;
 input i_reset;
+input i_enable;
 
 output o_hSync;
 output o_vSync;
@@ -38,6 +42,7 @@ output o_intv;
 
 input [7:0] i_pixData;
 output [23:0] o_pixIdx;
+output o_pixGate;
 
 output o_wb_ack;
 output [15:0] o_wb_dat;
@@ -62,6 +67,8 @@ wire vSync;
 assign o_hSync = hSync ? registers[8][0] : ~registers[8][0];
 assign o_vSync = vSync ? registers[8][1] : ~registers[8][1];
 
+assign o_pixGate = visible;
+
 // Register Map:
 // 0: hSyncStart( registers[0] ),
 // 1: hBpStart( registers[1] ),
@@ -76,7 +83,7 @@ assign o_vSync = vSync ? registers[8][1] : ~registers[8][1];
 
 vgatiming timing_generator(
     .i_clk(i_vgaclk),
-    .i_reset(i_reset),
+    .i_reset(i_enable && i_reset),
 
     .i_hSyncStart( registers[0] ),
     .i_hBpStart( registers[1] ),

@@ -46,13 +46,11 @@ reg [10:0] r_vcounter;
 reg r_hSync;
 reg r_vSync;
 
-wire hFpStart      = r_hcounter == 0;
 wire hSyncStart    = r_hcounter == i_hSyncStart;
 wire hBpStart      = r_hcounter == i_hBpStart;
 wire hVisibleStart = r_hcounter == i_hVisibleStart;
 wire hEnd          = r_hcounter == i_hEnd;
 
-wire vFpStart      = r_vcounter == 0;
 wire vSyncStart    = r_vcounter == i_vSyncStart;
 wire vBpStart      = r_vcounter == i_vBpStart;
 wire vVisibleStart = r_vcounter == i_vVisibleStart;

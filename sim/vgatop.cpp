@@ -74,6 +74,7 @@ int main(int argc, char *argv[]) {
     pCore = new Vvgatop();
     opentrace("trace.vcd");
 
+    pCore->i_enable = 0;
     reset();
 
     regwrite(0, hFRONTPORCH);
@@ -86,6 +87,8 @@ int main(int argc, char *argv[]) {
     regwrite(6, vFRONTPORCH + vSYNCLEN + vBACKPORCH);
     regwrite(7, vFRONTPORCH + vSYNCLEN + vBACKPORCH + vVISIBLE);
     regwrite(8, hPOLARITY | (vPOLARITY << 1) );
+
+    pCore->i_enable = 1;
 
 
     while(tickcount < 450000) {
