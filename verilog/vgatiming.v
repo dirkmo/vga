@@ -58,8 +58,8 @@ wire vBpStart      = r_vcounter == i_vBpStart;
 wire vVisibleStart = r_vcounter == i_vVisibleStart;
 wire vEnd          = r_vcounter == i_vEnd;
 
-assign o_inth = hFpStart;
-assign o_intv = vFpStart;
+assign o_inth = hEnd;
+assign o_intv = vEnd;
 assign o_hSync = r_hSync;
 assign o_vSync = r_vSync;
 
