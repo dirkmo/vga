@@ -15,8 +15,9 @@ module vgatop(
     i_pixData,
 
     // wishbone for conf. reg access
-    i_wb_dat,
+    o_wb_ack,
     o_wb_dat,
+    i_wb_dat,
     i_wb_addr,
     i_wb_sel,
     i_wb_clk,
@@ -38,6 +39,7 @@ output o_intv;
 input [7:0] i_pixData;
 output [23:0] o_pixIdx;
 
+output o_wb_ack;
 output [15:0] o_wb_dat;
 /* verilator lint_off UNUSED */
 input [15:0] i_wb_dat;
@@ -112,11 +114,13 @@ end
 //-----------------------------------------------------
 // Wishbone register interface
 
+wire valid_addr = (i_wb_addr < 9);
 assign o_wb_dat = { 5'd0, registers[i_wb_addr] };
+assign o_wb_ack = (i_wb_sel[1] || i_wb_sel[0]) && valid_addr;
 
 always @(posedge i_wb_clk)
 begin
-    if( i_wb_we && ( i_wb_addr < 9 ) ) begin
+    if( i_wb_we && valid_addr ) begin
         if( i_wb_sel[1] ) registers[i_wb_addr][10:8] <= i_wb_dat[10:8];
         if( i_wb_sel[0] ) registers[i_wb_addr][7:0] <= i_wb_dat[7:0];
     end
