@@ -53,7 +53,24 @@ assign o_blue = i_pixData[7:6];
 
 reg [10:0] registers[0:8];
 
-wire pixclk;
+wire visible;
+wire hSync;
+wire vSync;
+
+assign o_hSync = hSync ? registers[8][0] : ~registers[8][0];
+assign o_vSync = vSync ? registers[8][1] : ~registers[8][1];
+
+// Register Map:
+// 0: hSyncStart( registers[0] ),
+// 1: hBpStart( registers[1] ),
+// 2: hVisibleStart( registers[2] ),
+// 3: hEnd( registers[3] ),
+// 4: vSyncStart( registers[4] ),
+// 5: vBpStart( registers[5] ),
+// 6: vVisibleStart( registers[6] ),
+// 7: vEnd( registers[7] ),
+// 8: Bit 0 hSyncPolarity
+//    Bit 1 vSyncPolarity
 
 vgatiming timing_generator(
     .i_clk(i_vgaclk),
@@ -63,18 +80,16 @@ vgatiming timing_generator(
     .i_hBpStart( registers[1] ),
     .i_hVisibleStart( registers[2] ),
     .i_hEnd( registers[3] ),
-    .i_hSyncPol( registers[8][0] ),
 
     .i_vSyncStart( registers[4] ),
     .i_vBpStart( registers[5] ),
     .i_vVisibleStart( registers[6] ),
     .i_vEnd( registers[7] ),
-    .i_vSyncPol( registers[8][1] ),
 
-    .o_pixclk(pixclk),
+    .o_visible(visible),
 
-    .o_hSync(o_hSync),
-    .o_vSync(o_vSync),
+    .o_hSync(hSync),
+    .o_vSync(vSync),
 
     .o_inth(o_inth),
     .o_intv(o_intv)
@@ -86,10 +101,10 @@ assign o_pixIdx = r_pixAddr;
 
 always @(posedge i_vgaclk)
 begin
-    if( pixclk ) begin
+    if( visible ) begin
         r_pixAddr <= r_pixAddr + 24'd1;
     end
-    if(i_reset || o_vSync) begin
+    if(i_reset || vSync) begin
         r_pixAddr <= 0;
     end
 end

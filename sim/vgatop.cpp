@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
     regwrite(8, hPOLARITY | (vPOLARITY << 1) );
 
 
-    for( int i = 0; i < 1000; i++ ) {
+    while(tickcount < 450000) {
         tick();
     }
 

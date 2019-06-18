@@ -6,15 +6,13 @@ module vgatiming(
     i_hBpStart,
     i_hVisibleStart,
     i_hEnd,
-    i_hSyncPol,
 
     i_vSyncStart,
     i_vBpStart,
     i_vVisibleStart,
     i_vEnd,
-    i_vSyncPol,
 
-    o_pixclk,
+    o_visible,
 
     o_hSync,
     o_vSync,
@@ -30,18 +28,13 @@ input [10:0] i_hSyncStart;
 input [10:0] i_hBpStart;
 input [10:0] i_hVisibleStart;
 input [10:0] i_hEnd;
-input i_hSyncPol;
 
 input [10:0] i_vSyncStart;
 input [10:0] i_vBpStart;
 input [10:0] i_vVisibleStart;
 input [10:0] i_vEnd;
-input i_vSyncPol;
 
-reg r_hVisible;
-reg r_vVisible;
-
-output o_pixclk = r_hVisible && r_vVisible;
+output o_visible;
 output o_hSync;
 output o_vSync;
 
@@ -70,6 +63,11 @@ assign o_intv = vFpStart;
 assign o_hSync = r_hSync;
 assign o_vSync = r_vSync;
 
+reg r_hVisible;
+reg r_vVisible;
+
+assign o_visible = r_hVisible && r_vVisible;
+
 always @(posedge i_clk)
 begin
     r_hcounter <= r_hcounter + 1;
@@ -91,20 +89,20 @@ end
 always @(posedge i_clk)
 begin
     if( hSyncStart ) begin
-        r_hSync <= i_hSyncPol;
+        r_hSync <= 1;
     end
     if( i_reset || hBpStart ) begin
-        r_hSync <= ~i_hSyncPol;
+        r_hSync <= 0;
     end
 end
 
 always @(posedge i_clk)
 begin
     if( vSyncStart ) begin
-        r_vSync <= i_vSyncPol;
+        r_vSync <= 1;
     end
     if( i_reset || vBpStart ) begin
-        r_vSync <= ~i_vSyncPol;
+        r_vSync <= 0;
     end
 end
 
