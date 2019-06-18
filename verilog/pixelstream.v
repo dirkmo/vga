@@ -9,15 +9,17 @@ module pixelstream(
 
     o_wb_addr,
     o_wb_sel,
-    o_wb_cyc
+    o_wb_cyc,
     i_wb_ack,
-    i_wb_dat,
+    i_wb_dat
 );
 
 input i_clk;
 input i_reset;
 
 input [31:0] i_pixAddr;
+input i_pixClk;
+input i_pixGate;
 output [7:0] o_pixDat;
 
 output [31:0] o_wb_addr;
@@ -27,16 +29,15 @@ input i_wb_ack;
 input [31:0] i_wb_dat;
 
 
-
 wire fifo0_empty;
 wire fifo0_half;
 wire fifo0_full;
 
 reg fifo0_push;
 reg fifo0_pop;
-reg [31:0] fifo0_dat;
+wire [31:0] fifo0_dat;
 
-fifo fifo0(
+fifo #(.WIDTH(32), .DEPTH(4)) fifo0(
     .i_clk(i_clk),
     .i_reset(i_reset),
 
@@ -47,8 +48,8 @@ fifo fifo0(
     .i_dat(i_wb_dat),
     .o_dat(fifo0_dat),
 
-    .i_pop(fifo0_pop)
     .i_push(fifo0_push),
+    .i_pop(fifo0_pop)
 );
 
 always @(posedge i_pixClk)
