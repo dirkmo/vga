@@ -27,6 +27,17 @@ vgatiming: verilator
 vgatop: verilator
 	make -C $(VERILATOR_OUTPUTDIR) -j4 -f Vvgatop.mk
 
+
+verilator_fifo: fifo.cpp ../verilog/fifo.v
+	verilator $(VFLAGS) ../verilog/fifo.v fifo.cpp
+
+fifo: verilator_fifo
+	make -C $(VERILATOR_OUTPUTDIR) -j4 -f Vfifo.mk
+
+sim_fifo: fifo
+	$(VERILATOR_OUTPUTDIR)/Vfifo -d -t
+
+
 sim: vgatop
 	$(VERILATOR_OUTPUTDIR)/Vvgatop -d -t
 
