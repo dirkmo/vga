@@ -13,7 +13,6 @@ module vgatop(
     o_inth,
     o_intv,
 
-    o_pixIdx,  // pixel address
     o_pixGate, // high when in visible area
     i_pixData, // pixel data
 
@@ -104,19 +103,6 @@ vgatiming timing_generator(
     .o_intv(o_intv)
 );
 
-
-reg [23:0] r_pixAddr;
-assign o_pixIdx = r_pixAddr;
-
-always @(posedge i_vgaclk)
-begin
-    if( visible ) begin
-        r_pixAddr <= r_pixAddr + 24'd1;
-    end
-    if(i_reset || vSync) begin
-        r_pixAddr <= 0;
-    end
-end
 
 //-----------------------------------------------------
 // Wishbone register interface

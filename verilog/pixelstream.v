@@ -35,7 +35,7 @@ wire fifo0_empty;
 wire fifo0_half;
 wire fifo0_full;
 
-wire fifo0_push;
+reg r_fifo0_push;
 wire fifo0_pop;
 wire [31:0] fifo0_dat;
 
@@ -50,7 +50,7 @@ fifo #(.WIDTH(32), .DEPTH(4)) fifo0(
     .i_dat(i_wb_dat),
     .o_dat(fifo0_dat),
 
-    .i_push(fifo0_push),
+    .i_push(r_fifo0_push),
     .i_pop(fifo0_pop)
 );
 
@@ -67,8 +67,8 @@ begin
 end
 
 //-------------------------------
-// fifo gives 32 bit data
-// shifting out byte wise
+// fifo gives 32 bit data.
+// Shifting out byte wise
 
 reg [1:0] r_idx;
 always @(posedge i_pixClk)
@@ -94,15 +94,12 @@ assign o_pixDat = r_idx == 0 ? fifo0_dat[31:24] :
 reg [31:0] r_addr;
 
 assign o_wb_addr = r_addr;
-assign o_wb_cyc = r_fillup;
-assign fifo0_push = i_wb_ack;
 
 always @(posedge i_wb_clk)
-begin
-    if( i_wb_ack ) begin
-        
-    end
-end
+    r_fifo0_push <= i_wb_ack;
+
+always @(posedge i_wb_clk)
+    r_wb_cyc <= r_fillup;
 
 
 
